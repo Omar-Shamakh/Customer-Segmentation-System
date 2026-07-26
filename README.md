@@ -20,20 +20,25 @@ dataset (2,240 customers, 29 raw features).
 
 ## Model evaluation
 
-Systematically compared feature subsets and cluster counts using the Elbow Method (WCSS)
-and Silhouette Score, rather than picking k by eye. A lean, curated feature set (`Age`,
-`Income`, `Total_Spending`, `NumWebPurchases`, `NumStorePurchases`, `NumWebVisitsMonth`,
-`Recency`, `Total_Campaigns_Accepted`) with log-transformed skewed variables outperformed
-both a wider 10-feature set and the tutorial's original feature list — improving Silhouette
-Score from 0.16 to **0.28** at k=3.
+Systematically compared feature subsets, cluster counts, and clustering spaces using the
+Elbow Method (WCSS) and Silhouette Score, rather than picking k by eye:
+
+1. A lean, curated 8-feature set (log-transformed skewed variables + scaling) outperformed
+   both a wider 10-feature set and the tutorial's original feature list.
+2. Clustering directly on **2 PCA-reduced components** (instead of the raw scaled feature
+   space) roughly doubled Silhouette Score again — from 0.28 to **0.42** at k=3 — by
+   removing correlated noise before K-Means sees the data.
+
+Final approach: 8 curated features → log-transform + scale → PCA (2 components,
+55.75% variance explained) → K-Means (k=3). Silhouette Score: **0.42**.
 
 ## Segments discovered (k=3)
 
 | Cluster | Profile | Count |
 |---|---|---|
-| 0 | Lower income, low spending, low engagement — budget segment | 973 |
-| 1 | Higher income, strong spenders, low campaign response | 1057 |
-| 2 | Highest income, highest spenders, highly campaign-responsive — VIP segment | 206 |
+| 0 | Low income, low spending, low engagement — budget segment | 976 |
+| 1 | High income, high spending, **recent** purchasers, moderate campaign response — active high-value segment | 500 |
+| 2 | High income, high spending, but **haven't purchased recently**, low campaign response — at-risk/lapsing high-value segment | 760 |
 
 ## Project structure
 

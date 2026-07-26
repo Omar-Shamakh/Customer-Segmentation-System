@@ -1,39 +1,27 @@
 """
-End-to-end training script: clean data -> engineer features -> fit K-Means -> save pipeline.
+End-to-end training script: clean data -> engineer features -> fit PCA+K-Means -> save pipeline.
 """
 import pandas as pd
 import joblib
 
 from data_processing import preprocess_pipeline
-from clustering import build_preprocessor, CLUSTERING_FEATURES, N_CLUSTERS
-from sklearn.pipeline import Pipeline
-from sklearn.cluster import KMeans
+from clustering import build_full_pipeline, CLUSTERING_FEATURES
 
 
 def train_and_save(raw_path: str, processed_path: str, model_path: str) -> pd.DataFrame:
-    # 1. Clean + engineer features
     df = preprocess_pipeline(raw_path, processed_path)
 
-    # 2. Fit preprocessing + K-Means as one pipeline
-    pipeline = Pipeline([
-        ("preprocessor", build_preprocessor()),
-        ("kmeans", KMeans(n_clusters=N_CLUSTERS, init="k-means++", n_init=10, random_state=42)),
-    ])
+    pipeline = build_full_pipeline()
     df["Cluster"] = pipeline.fit_predict(df[CLUSTERING_FEATURES])
 
-    # 3. Save the fitted pipeline (preprocessing + model together — no train/serve skew)
     joblib.dump(pipeline, model_path)
     print(f"Model saved to {model_path}")
 
-    # 4. Save cluster-labeled data for profiling/reporting
     df.to_csv("data/processed/customer_segments.csv", index=False)
-
     return df
 
 
 def profile_clusters(df: pd.DataFrame) -> pd.DataFrame:
-    """Summarize each cluster's average characteristics — turns raw cluster IDs into
-    business-readable personas."""
     profile_cols = [
         "Age", "Income", "Total_Spending", "NumWebPurchases",
         "NumStorePurchases", "NumWebVisitsMonth", "Recency", "Total_Campaigns_Accepted",
