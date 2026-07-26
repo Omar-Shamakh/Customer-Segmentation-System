@@ -3,15 +3,14 @@ venv/
 __pycache__/
 *.pyc
 
-# Data (raw data shouldn't bloat git history)
+# Raw data (large/licensed — document how to obtain it in README instead)
 data/raw/*
 !data/raw/.gitkeep
-data/processed/*
-!data/processed/.gitkeep
 
-# Models
-models/*.pkl
-models/*.joblib
+# Regenerable intermediate data (not needed to run the app)
+data/processed/customer_segmentation_clean.csv
+data/processed/cluster_evaluation.csv
+data/processed/customer_segments.csv
 
 # IDE / OS
 .vscode/
