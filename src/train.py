@@ -23,7 +23,7 @@ def train_and_save(raw_path: str, processed_path: str, model_path: str) -> pd.Da
 
 def profile_clusters(df: pd.DataFrame) -> pd.DataFrame:
     profile_cols = [
-        "Age", "Income", "Total_Spending", "NumWebPurchases",
+        "Age", "Income", "Total_Spending", "Total_Purchases", "NumWebPurchases",
         "NumStorePurchases", "NumWebVisitsMonth", "Recency", "Total_Campaigns_Accepted",
     ]
     summary = df.groupby("Cluster")[profile_cols].mean().round(1)

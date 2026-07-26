@@ -13,9 +13,9 @@ MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "models", "kmeans_pip
 PROFILES_PATH = os.path.join(os.path.dirname(__file__), "..", "models", "cluster_profiles.csv")
 
 CLUSTER_PERSONAS = {
-    0: "Lower income, low spending, low engagement — budget segment",
-    1: "Higher income, strong spenders, but low campaign response",
-    2: "Highest income, highest spenders, highly campaign-responsive — VIP segment",
+    0: "High income, high spending, but low campaign engagement — established value segment",
+    1: "Highest income, highest spending, highest campaign response — VIP segment",
+    2: "Lower income, low spending, low engagement — budget segment",
 }
 
 
@@ -44,6 +44,7 @@ def main():
         age = st.slider("Age", 18, 90, 40)
         income = st.number_input("Annual Income ($)", 0, 200000, 50000, step=1000)
         total_spending = st.number_input("Total Spending ($, last 2 years)", 0, 3000, 500)
+        total_purchases = st.slider("Total Purchases (all channels)", 0, 40, 10)
         recency = st.slider("Days Since Last Purchase", 0, 100, 30)
 
     with col2:
@@ -57,6 +58,7 @@ def main():
             "Age": age,
             "Income": income,
             "Total_Spending": total_spending,
+            "Total_Purchases": total_purchases,
             "NumWebPurchases": num_web_purchases,
             "NumStorePurchases": num_store_purchases,
             "NumWebVisitsMonth": web_visits,

@@ -1,25 +1,29 @@
 """
-Clustering pipeline: preprocessing (log-transform + scale) -> PCA -> K-Means, plus evaluation.
+Clustering pipeline: preprocessing (log-transform + robust-scale) -> PCA -> K-Means, plus evaluation.
 """
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
 from sklearn.pipeline import Pipeline, FunctionTransformer
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 import joblib
 
+# Final curated feature set — arrived at via systematic comparison of feature subsets,
+# scalers, and PCA-vs-raw clustering spaces. Total_Purchases added back in after
+# confirming it improves separation once combined with RobustScaler + PCA.
 CLUSTERING_FEATURES = [
-    "Age", "Income", "Total_Spending",
+    "Age", "Income", "Total_Spending", "Total_Purchases",
     "NumWebPurchases", "NumStorePurchases",
     "NumWebVisitsMonth", "Recency", "Total_Campaigns_Accepted",
 ]
-SKEWED_FEATURES = ["Income", "Total_Spending"]
+SKEWED_FEATURES = ["Income", "Total_Spending", "Total_Purchases"]
 
-# Clustering on PCA-reduced components (rather than raw scaled features) removes
-# correlated noise before K-Means sees the data — nearly doubled Silhouette Score
-# in testing (0.28 -> 0.42) versus clustering on the full 8-feature space.
+# RobustScaler (median/IQR-based) outperformed StandardScaler here — this dataset has
+# genuine extreme-spender outliers that distort mean/std-based scaling.
+# Clustering on 2 PCA components (not raw scaled features) removes correlated noise
+# before K-Means ever sees the data.
 N_PCA_COMPONENTS = 2
 N_CLUSTERS = 3
 
@@ -33,15 +37,13 @@ def log_transform_skewed(X: pd.DataFrame) -> pd.DataFrame:
 
 
 def build_scaling_pipeline() -> Pipeline:
-    """Log-transform skewed features, then standard-scale everything (pre-PCA)."""
     return Pipeline([
         ("log_transform", FunctionTransformer(log_transform_skewed, feature_names_out="one-to-one")),
-        ("scaler", StandardScaler()),
+        ("scaler", RobustScaler()),
     ])
 
 
 def build_full_pipeline(n_clusters: int = N_CLUSTERS, n_components: int = N_PCA_COMPONENTS) -> Pipeline:
-    """Full pipeline: scaling -> PCA -> K-Means, as a single fit/predict unit."""
     return Pipeline([
         ("scaling", build_scaling_pipeline()),
         ("pca", PCA(n_components=n_components, random_state=42)),
