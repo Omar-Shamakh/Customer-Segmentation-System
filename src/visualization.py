@@ -39,7 +39,7 @@ def plot_pca_clusters(X_processed, labels, save_path: str = None) -> pd.DataFram
 
 
 if __name__ == "__main__":
-    from clustering import build_preprocessor, CLUSTERING_FEATURES
+    from clustering import build_preprocessor, CLUSTERING_FEATURES, N_CLUSTERS
     from sklearn.cluster import KMeans
 
     df = pd.read_csv("data/processed/customer_segmentation_clean.csv")
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     preprocessor = build_preprocessor()
     X_processed = preprocessor.fit_transform(df[CLUSTERING_FEATURES])
 
-    kmeans = KMeans(n_clusters=5, init="k-means++", n_init=10, random_state=42)
+    kmeans = KMeans(n_clusters=N_CLUSTERS, init="k-means++", n_init=10, random_state=42)
     labels = kmeans.fit_predict(X_processed)
 
     plot_pca_clusters(X_processed, labels, save_path="models/pca_clusters.png")

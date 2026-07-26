@@ -9,22 +9,31 @@ dataset (2,240 customers, 29 raw features).
   and engineered features (`Total_Spending`, `Total_Purchases`, `Family_Size`,
   `Customer_Tenure_Days`, `Total_Campaigns_Accepted`).
 - **Exploratory Data Analysis** — see `notebooks/eda.ipynb`.
-- **K-Means clustering** with a curated, scaled, one-hot-encoded feature set.
-- **Cluster evaluation** via the Elbow Method (WCSS) and Silhouette Score across k=2–10.
-- **PCA visualization** of the resulting 5 clusters in 2D.
+- **K-Means clustering** on a curated, log-transformed, scaled feature set (selected via
+  systematic comparison, not the full engineered feature list — see Model Evaluation below).
+- **Cluster evaluation** via the Elbow Method (WCSS) and Silhouette Score across k=2–10,
+  compared across multiple feature-set candidates.
+- **PCA visualization** of the resulting clusters in 2D.
 - **Interactive Streamlit app** for real-time segment prediction on new customer input.
 - **Model persistence** — the entire preprocessing + K-Means pipeline is saved as a
   single Joblib artifact (no train/serve skew).
 
-## Segments discovered (k=5)
+## Model evaluation
 
-| Cluster | Profile |
-|---|---|
-| 0 | Older, budget-conscious households with children — low engagement |
-| 1 | Younger, lower-income customers — lowest spenders, low engagement |
-| 2 | Mature, comfortable-income customers — strong spenders |
-| 3 | High-income, top spenders, highest campaign responsiveness — VIP segment |
-| 4 | High-income, high-spending, few/no children — low campaign engagement |
+Systematically compared feature subsets and cluster counts using the Elbow Method (WCSS)
+and Silhouette Score, rather than picking k by eye. A lean, curated feature set (`Age`,
+`Income`, `Total_Spending`, `NumWebPurchases`, `NumStorePurchases`, `NumWebVisitsMonth`,
+`Recency`, `Total_Campaigns_Accepted`) with log-transformed skewed variables outperformed
+both a wider 10-feature set and the tutorial's original feature list — improving Silhouette
+Score from 0.16 to **0.28** at k=3.
+
+## Segments discovered (k=3)
+
+| Cluster | Profile | Count |
+|---|---|---|
+| 0 | Lower income, low spending, low engagement — budget segment | 973 |
+| 1 | Higher income, strong spenders, low campaign response | 1057 |
+| 2 | Highest income, highest spenders, highly campaign-responsive — VIP segment | 206 |
 
 ## Project structure
 

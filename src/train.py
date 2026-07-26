@@ -5,11 +5,9 @@ import pandas as pd
 import joblib
 
 from data_processing import preprocess_pipeline
-from clustering import build_preprocessor, CLUSTERING_FEATURES
+from clustering import build_preprocessor, CLUSTERING_FEATURES, N_CLUSTERS
 from sklearn.pipeline import Pipeline
 from sklearn.cluster import KMeans
-
-N_CLUSTERS = 5
 
 
 def train_and_save(raw_path: str, processed_path: str, model_path: str) -> pd.DataFrame:
@@ -35,10 +33,10 @@ def train_and_save(raw_path: str, processed_path: str, model_path: str) -> pd.Da
 
 def profile_clusters(df: pd.DataFrame) -> pd.DataFrame:
     """Summarize each cluster's average characteristics — turns raw cluster IDs into
-    business-readable personas, which is the actual point of segmentation."""
+    business-readable personas."""
     profile_cols = [
-        "Age", "Income", "Total_Spending", "Total_Purchases",
-        "Total_Children", "Family_Size", "Recency", "Total_Campaigns_Accepted",
+        "Age", "Income", "Total_Spending", "NumWebPurchases",
+        "NumStorePurchases", "NumWebVisitsMonth", "Recency", "Total_Campaigns_Accepted",
     ]
     summary = df.groupby("Cluster")[profile_cols].mean().round(1)
     summary["Count"] = df.groupby("Cluster").size()

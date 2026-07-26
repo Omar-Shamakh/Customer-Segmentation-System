@@ -13,11 +13,9 @@ MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "models", "kmeans_pip
 PROFILES_PATH = os.path.join(os.path.dirname(__file__), "..", "models", "cluster_profiles.csv")
 
 CLUSTER_PERSONAS = {
-    0: "Older, budget-conscious households with children — low engagement",
-    1: "Younger, lower-income customers — lowest spenders, low engagement",
-    2: "Mature, comfortable-income customers — strong spenders",
-    3: "High-income, top spenders with the highest campaign responsiveness — VIP segment",
-    4: "High-income, high-spending customers with few/no children — low campaign engagement",
+    0: "Lower income, low spending, low engagement — budget segment",
+    1: "Higher income, strong spenders, but low campaign response",
+    2: "Highest income, highest spenders, highly campaign-responsive — VIP segment",
 }
 
 
@@ -45,33 +43,25 @@ def main():
     with col1:
         age = st.slider("Age", 18, 90, 40)
         income = st.number_input("Annual Income ($)", 0, 200000, 50000, step=1000)
-        education = st.selectbox("Education", ["Undergraduate", "Master", "PhD"])
-        marital_status = st.selectbox("Marital Status", ["Single", "Partnered"])
-        total_children = st.slider("Number of Children", 0, 3, 0)
-        family_size = st.slider("Family Size", 1, 6, 1 + total_children)
+        total_spending = st.number_input("Total Spending ($, last 2 years)", 0, 3000, 500)
+        recency = st.slider("Days Since Last Purchase", 0, 100, 30)
 
     with col2:
-        total_spending = st.number_input("Total Spending ($, last 2 years)", 0, 3000, 500)
-        total_purchases = st.slider("Total Purchases", 0, 40, 10)
-        recency = st.slider("Days Since Last Purchase", 0, 100, 30)
-        tenure_days = st.slider("Customer Tenure (days)", 0, 1000, 300)
-        campaigns_accepted = st.slider("Campaigns Accepted (past 5)", 0, 5, 0)
+        num_web_purchases = st.slider("Web Purchases", 0, 30, 5)
+        num_store_purchases = st.slider("Store Purchases", 0, 20, 5)
         web_visits = st.slider("Web Visits per Month", 0, 20, 5)
+        campaigns_accepted = st.slider("Campaigns Accepted (past 5)", 0, 5, 0)
 
     if st.button("Predict Segment", type="primary"):
         input_df = pd.DataFrame([{
-            "Income": income,
             "Age": age,
-            "Recency": recency,
-            "Customer_Tenure_Days": tenure_days,
-            "Total_Children": total_children,
-            "Family_Size": family_size,
+            "Income": income,
             "Total_Spending": total_spending,
-            "Total_Purchases": total_purchases,
-            "Total_Campaigns_Accepted": campaigns_accepted,
+            "NumWebPurchases": num_web_purchases,
+            "NumStorePurchases": num_store_purchases,
             "NumWebVisitsMonth": web_visits,
-            "Education": education,
-            "Marital_Status": marital_status,
+            "Recency": recency,
+            "Total_Campaigns_Accepted": campaigns_accepted,
         }])
 
         cluster = pipeline.predict(input_df)[0]

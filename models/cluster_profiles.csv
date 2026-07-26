@@ -1,6 +1,4 @@
-Cluster,Age,Income,Total_Spending,Total_Purchases,Total_Children,Family_Size,Recency,Total_Campaigns_Accepted,Count
-0,61.8,42938.1,145.1,9.7,2.0,3.7,51.9,0.2,455
-1,49.6,30520.1,104.0,7.8,0.8,2.4,48.1,0.2,647
-2,60.9,59698.6,822.7,22.0,1.1,2.8,46.4,0.3,576
-3,55.4,79013.9,1582.3,21.0,0.2,1.8,43.1,2.9,166
-4,59.1,74949.0,1237.4,19.5,0.1,1.7,54.0,0.4,392
+Cluster,Age,Income,Total_Spending,NumWebPurchases,NumStorePurchases,NumWebVisitsMonth,Recency,Total_Campaigns_Accepted,Count
+0,53.9,33387.7,90.3,2.0,3.1,6.6,48.8,0.2,973
+1,60.1,64476.6,915.7,5.6,7.9,4.4,50.4,0.2,1057
+2,57.0,75379.1,1452.7,5.9,7.8,4.1,44.1,2.7,206
